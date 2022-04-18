@@ -1,6 +1,7 @@
 import React from "react";
 import { Tab } from "semantic-ui-react";
 import Appointments from "../components/Appointments";
+import UserComments from "../components/UserComments";
 import { useSelector } from "react-redux";
 
 const Profile = () => {
@@ -20,6 +21,14 @@ const Profile = () => {
       render: () => (
         <Tab.Pane attached={false}>
           <Statistics />
+        </Tab.Pane>
+      ),
+    },
+    {
+      menuItem: "Comments",
+      render: () => (
+        <Tab.Pane attached={false}>
+          <UserComments />
         </Tab.Pane>
       ),
     },

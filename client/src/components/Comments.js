@@ -27,7 +27,6 @@ const Comments = ({ id }) => {
     const { ucomment, rating } = comment;
     if (!ucomment || !rating) return;
     dispatch(createComment({ ...comment, businessId: id }));
-    dispatch(fetchComments(id));
   };
 
   useEffect(() => {
@@ -36,18 +35,26 @@ const Comments = ({ id }) => {
 
   useEffect(() => {
     if (isError) {
-      console.log(message);
       setError("error ", message);
     }
 
     if (isSuccess) {
-      setComments(message);
+      if (Array.isArray(message)) {
+        setComments(message);
+      } else if (typeof message === "object" && !Array.isArray(message)) {
+        setComments([...comments, message]);
+      }
+      setComment({ ucomment: "", rating: 5 });
     }
 
     return () => {
       dispatch(reset());
     };
   }, [isError, isSuccess, message, dispatch]);
+
+  useEffect(() => {
+    console.log(comments);
+  }, [comments]);
 
   return (
     <Comment.Group>

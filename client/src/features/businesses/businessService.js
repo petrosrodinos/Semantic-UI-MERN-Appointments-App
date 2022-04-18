@@ -9,7 +9,7 @@ const createBusiness = async (userData) => {
     { headers: { "Content-Type": "application/json" } }
   );
 
-  return data;
+  return data.comment;
 };
 
 const fetchBusinesses = async () => {

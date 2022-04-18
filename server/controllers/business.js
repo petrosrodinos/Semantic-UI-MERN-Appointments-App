@@ -1,8 +1,6 @@
 const Business = require("../models/business");
-const Comment = require("../models/comment");
 const cloudinary = require("../utils/cloudinary");
 const User = require("../models/user");
-const Appointment = require("../models/appointment");
 
 const uploader = async (path) => await cloudinary.uploads(path);
 
@@ -108,55 +106,6 @@ const fetchBusiness = async (req, res, next) => {
   }
 };
 
-const createComment = async (req, res, next) => {
-  try {
-    const userId = req.userId;
-    const { ucomment, rating, businessId } = req.body;
-    let userMadeAppointment;
-
-    userMadeAppointment = await Appointment.find({
-      clientId: userId,
-      businessId: businessId,
-    });
-
-    if (userMadeAppointment.length <= 0) {
-      return res.status(401).json({
-        message: "You have to book an appointment to leave a comment",
-      });
-    }
-
-    const comment = new Comment({
-      comment: ucomment,
-      rating,
-      clientId: userId,
-      businessId,
-    });
-
-    await comment.save();
-
-    return res.status(200).json({ message: "OK" });
-  } catch (error) {
-    console.log(error);
-    return res.status(400).send({ message: "Could not create your comment" });
-  }
-};
-
-const fetchComments = async (req, res, next) => {
-  try {
-    const businessId = req.params.id;
-    const comments = await Comment.find({ businessId: businessId }).populate(
-      "clientId",
-      "name -_id"
-    );
-    return res.status(200).json({ comments: comments });
-  } catch (error) {
-    console.log(error);
-    return res.status(400).send({ message: "Could not find any comments" });
-  }
-};
-
 exports.createBusiness = createBusiness;
 exports.fetchBusinesses = fetchBusinesses;
 exports.fetchBusiness = fetchBusiness;
-exports.createComment = createComment;
-exports.fetchComments = fetchComments;

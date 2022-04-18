@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const usersRoutes = require("./routes/users");
 const businessRoutes = require("./routes/business");
 const appointmentRoutes = require("./routes/appointments");
+const commentsRoutes = require("./routes/comments");
+
 const path = require("path");
 const cors = require("cors");
 
@@ -15,9 +17,10 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
 app.use(express.static(path.join("build")));
 
-app.use("/api/users", usersRoutes);
+app.use("/api/user", usersRoutes);
 app.use("/api", businessRoutes);
 app.use("/api", appointmentRoutes);
+app.use("/api/", commentsRoutes);
 
 app.use((req, res, next) => {
   res.sendFile(path.resolve(__dirname, "build", "index.html"));

@@ -61,7 +61,6 @@ const Appointments = ({ profile, business }) => {
     }
 
     if (isSuccess) {
-      console.log(message);
       setState(message);
     }
 
