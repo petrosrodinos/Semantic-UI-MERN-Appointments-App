@@ -12,7 +12,6 @@ const createComment = async (userData, token) => {
     userData,
     config
   );
-
   return data.comment;
 };
 

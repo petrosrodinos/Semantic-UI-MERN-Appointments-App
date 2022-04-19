@@ -13,7 +13,7 @@ const createComment = async (req, res, next) => {
     });
 
     if (userMadeAppointment.length <= 0) {
-      return res.status(401).json({
+      return res.status(400).send({
         message: "You have to book an appointment to leave a comment",
       });
     }

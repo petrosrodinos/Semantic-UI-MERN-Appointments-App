@@ -39,7 +39,6 @@ const Comments = ({ id }) => {
 
   useEffect(() => {
     if (isError) {
-      console.log(message);
       setError(message);
     }
 

@@ -65,8 +65,8 @@ const Login = () => {
               name="email"
               size="large"
               fluid
-              label="Email Or Password"
-              placeholder="Email Or Password"
+              label="Email Or Phone"
+              placeholder="Email Or Phone"
             />
           </Form.Field>
           <Form.Field>

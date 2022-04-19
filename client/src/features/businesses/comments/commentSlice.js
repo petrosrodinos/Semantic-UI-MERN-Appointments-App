@@ -100,7 +100,7 @@ export const businessCommentSlice = createSlice({
       })
       .addCase(createComment.rejected, (state, action) => {
         state.isLoading = false;
-        state.Error = true;
+        state.isError = true;
         state.message = action.payload;
       })
       .addCase(fetchComments.pending, (state) => {
