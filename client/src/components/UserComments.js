@@ -15,9 +15,9 @@ import {
 } from "../features/businesses/comments/commentSlice.js";
 
 const UserComments = () => {
+  const dispatch = useDispatch();
   const [comments, setComments] = useState([]);
   const [error, setError] = useState(null);
-  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { isLoading, isError, message, isSuccess } = useSelector(
     (state) => state.comments

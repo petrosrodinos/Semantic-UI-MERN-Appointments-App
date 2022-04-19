@@ -13,19 +13,23 @@ import {
   fetchComments,
   reset,
 } from "../features/businesses/comments/commentSlice.js";
+import { useNavigate } from "react-router-dom";
 
 const Comments = ({ id }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [comment, setComment] = useState({ ucomment: "", rating: 5 });
   const [comments, setComments] = useState([]);
   const { isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.comments
   );
+  const { user } = useSelector((state) => state.auth);
 
   const handleSubmit = () => {
     const { ucomment, rating } = comment;
     if (!ucomment || !rating) return;
+    if (!user) navigate("/auth/login");
     dispatch(createComment({ ...comment, businessId: id }));
   };
 
@@ -35,7 +39,8 @@ const Comments = ({ id }) => {
 
   useEffect(() => {
     if (isError) {
-      setError("error ", message);
+      console.log(message);
+      setError(message);
     }
 
     if (isSuccess) {
@@ -51,10 +56,6 @@ const Comments = ({ id }) => {
       dispatch(reset());
     };
   }, [isError, isSuccess, message, dispatch]);
-
-  useEffect(() => {
-    console.log(comments);
-  }, [comments]);
 
   return (
     <Comment.Group>
