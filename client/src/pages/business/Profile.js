@@ -38,7 +38,6 @@ const Profile = () => {
 
   useEffect(() => {
     if (isError) {
-      console.log(message);
       setError(message);
     }
     if (isSuccess) {
@@ -60,7 +59,7 @@ const Profile = () => {
             {data && (
               <>
                 <BusinessCard profile data={data}>
-                  <Comments id={id} />
+                  <Comments name={data.name} id={id} />
                 </BusinessCard>
                 <Rail position="left">
                   <Sticky context={contextRef}>

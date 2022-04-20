@@ -26,11 +26,11 @@ export const createComment = createAsyncThunk(
   }
 );
 
-export const fetchComments = createAsyncThunk(
+export const fetchBusinessComments = createAsyncThunk(
   "fetch/comments",
   async (id, thunkAPI) => {
     try {
-      return await commentService.fetchComments(id);
+      return await commentService.fetchBusinessComments(id);
     } catch (error) {
       const message =
         (error.response &&
@@ -78,6 +78,24 @@ export const deleteComment = createAsyncThunk(
   }
 );
 
+export const replyComment = createAsyncThunk(
+  "reply/comment",
+  async (reply, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await commentService.replyComment(reply, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const businessCommentSlice = createSlice({
   name: "comments",
   initialState,
@@ -86,6 +104,7 @@ export const businessCommentSlice = createSlice({
       state.isLoading = false;
       state.isSuccess = false;
       state.isError = false;
+      state.message = "";
     },
   },
   extraReducers: (builder) => {
@@ -103,15 +122,15 @@ export const businessCommentSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(fetchComments.pending, (state) => {
+      .addCase(fetchBusinessComments.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(fetchComments.fulfilled, (state, action) => {
+      .addCase(fetchBusinessComments.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.message = action.payload;
       })
-      .addCase(fetchComments.rejected, (state, action) => {
+      .addCase(fetchBusinessComments.rejected, (state, action) => {
         state.isLoading = false;
         state.Error = true;
         state.message = action.payload;
@@ -138,6 +157,19 @@ export const businessCommentSlice = createSlice({
         state.message = action.payload;
       })
       .addCase(deleteComment.rejected, (state, action) => {
+        state.isLoading = false;
+        state.Error = true;
+        state.message = action.payload;
+      })
+      .addCase(replyComment.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(replyComment.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action.payload;
+      })
+      .addCase(replyComment.rejected, (state, action) => {
         state.isLoading = false;
         state.Error = true;
         state.message = action.payload;

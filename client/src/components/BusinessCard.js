@@ -28,7 +28,7 @@ const BusinessCard = ({ data, profile, children }) => {
 
         <Card.Meta>
           <p>{data.ownername}</p>
-          <Rating disabled icon="star" defaultRating={4} maxRating={5} />
+          <Rating disabled icon="star" defaultRating={5} maxRating={5} />
         </Card.Meta>
       </Card.Content>
       <Carousel showThumbs={false} infiniteLoop={true} showStatus={false}>

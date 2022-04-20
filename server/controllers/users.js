@@ -141,7 +141,16 @@ const login = async (req, res, next) => {
       .send({ message: "Logging in failed, please try again later.2" });
   }
 
-  res.json({
+  if (existingUser.business.hasBusiness) {
+    return res.status(200).json({
+      userId: existingUser.id,
+      token: token,
+      businessId: existingUser.business.businessId,
+      hasBusiness: existingUser.business.hasBusiness,
+    });
+  }
+
+  res.status(200).json({
     userId: existingUser.id,
     token: token,
     hasBusiness: existingUser.business.hasBusiness,

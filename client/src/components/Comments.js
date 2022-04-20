@@ -10,12 +10,12 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import {
   createComment,
-  fetchComments,
+  fetchBusinessComments,
   reset,
 } from "../features/businesses/comments/commentSlice.js";
 import { useNavigate } from "react-router-dom";
 
-const Comments = ({ id }) => {
+const Comments = ({ id, name }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
@@ -34,7 +34,7 @@ const Comments = ({ id }) => {
   };
 
   useEffect(() => {
-    dispatch(fetchComments(id));
+    dispatch(fetchBusinessComments(id));
   }, []);
 
   useEffect(() => {
@@ -46,6 +46,7 @@ const Comments = ({ id }) => {
       if (Array.isArray(message)) {
         setComments(message);
       } else if (typeof message === "object" && !Array.isArray(message)) {
+        console.log(message);
         setComments([...comments, message]);
       }
       setComment({ ucomment: "", rating: 5 });
@@ -85,15 +86,24 @@ const Comments = ({ id }) => {
                 <div>{c.created}</div>
               </Comment.Metadata>
               <Comment.Text>{c.comment}</Comment.Text>
-              <Comment.Actions>
-                <Comment.Action>Reply</Comment.Action>
-              </Comment.Actions>
             </Comment.Content>
+            {c.reply && (
+              <Comment.Group>
+                <Comment>
+                  <Comment.Avatar src="https://react.semantic-ui.com/images/avatar/small/jenny.jpg" />
+                  <Comment.Content>
+                    <Comment.Author as="a">{name}</Comment.Author>
+                    <Comment.Text>{c.reply}</Comment.Text>
+                  </Comment.Content>
+                </Comment>
+              </Comment.Group>
+            )}
           </Comment>
         ))}
 
       <Form reply>
         <Form.TextArea
+          style={{ resize: "none", minHeight: 10 }}
           value={comment.ucomment}
           onChange={(e, { value }) =>
             setComment({ ...comment, ucomment: value })
@@ -106,6 +116,13 @@ const Comments = ({ id }) => {
             <p>{error}</p>
           </Message>
         )}
+        <Rating
+          onRate={(e, { rating }) => setComment({ ...comment, rating })}
+          icon="star"
+          defaultRating={comment.rating}
+          maxRating={5}
+        />
+        <br />
         <Button
           loading={isLoading}
           onClick={handleSubmit}
@@ -113,14 +130,6 @@ const Comments = ({ id }) => {
           labelPosition="left"
           icon="edit"
           color="teal"
-        />
-        <Rating
-          onRate={(e, { rating, maxRating }) =>
-            setComment({ ...comment, rating })
-          }
-          icon="star"
-          defaultRating={comment.rating}
-          maxRating={5}
         />
       </Form>
     </Comment.Group>

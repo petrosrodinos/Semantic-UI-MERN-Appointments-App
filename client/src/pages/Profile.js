@@ -2,6 +2,7 @@ import React from "react";
 import { Tab } from "semantic-ui-react";
 import Appointments from "../components/Appointments";
 import UserComments from "../components/UserComments";
+import BusinessComments from "../components/BusinessComments";
 import { useSelector } from "react-redux";
 
 const Profile = () => {
@@ -9,25 +10,51 @@ const Profile = () => {
 
   const panes = [
     {
-      menuItem: "Profile Appointments",
+      menuItem: "User Profile",
       render: () => (
         <Tab.Pane attached={false}>
-          <Appointments profile />
+          <User />
         </Tab.Pane>
       ),
     },
-    {
-      menuItem: "Statistics",
+  ];
+
+  if (user.hasBusiness) {
+    panes.push({
+      menuItem: "Business Profile",
       render: () => (
         <Tab.Pane attached={false}>
-          <Statistics />
+          <Business />
+        </Tab.Pane>
+      ),
+    });
+  }
+
+  return (
+    <Tab
+      style={{ paddingLeft: 50, paddingRight: 50 }}
+      menu={{ secondary: false, pointing: true }}
+      panes={panes}
+    />
+  );
+};
+
+const User = () => {
+  const panes = [
+    {
+      menuItem: "Appointments",
+      render: () => (
+        <Tab.Pane>
+          {" "}
+          <Appointments profile />
         </Tab.Pane>
       ),
     },
     {
       menuItem: "Comments",
       render: () => (
-        <Tab.Pane attached={false}>
+        <Tab.Pane>
+          {" "}
           <UserComments />
         </Tab.Pane>
       ),
@@ -41,28 +68,12 @@ const Profile = () => {
       ),
     },
   ];
-
-  if (user.hasBusiness) {
-    panes.splice(1, 0, {
-      menuItem: "Business Appointments",
-      render: () => (
-        <Tab.Pane attached={false}>
-          <BusinessAppointments />
-        </Tab.Pane>
-      ),
-    });
-  }
-
   return (
-    <Tab
-      style={{ paddingLeft: 50, paddingRight: 50 }}
-      menu={{ secondary: true, pointing: true }}
-      panes={panes}
-    />
+    <Tab menu={{ fluid: true, vertical: true, tabular: true }} panes={panes} />
   );
 };
 
-const BusinessAppointments = () => {
+const Business = () => {
   const panes = [
     {
       menuItem: "Todays Appointments",
@@ -82,6 +93,31 @@ const BusinessAppointments = () => {
         </Tab.Pane>
       ),
     },
+    {
+      menuItem: "Comments",
+      render: () => (
+        <Tab.Pane>
+          {" "}
+          <BusinessComments />
+        </Tab.Pane>
+      ),
+    },
+    {
+      menuItem: "Statistics",
+      render: () => (
+        <Tab.Pane attached={false}>
+          <Statistics />
+        </Tab.Pane>
+      ),
+    },
+    {
+      menuItem: "Settings",
+      render: () => (
+        <Tab.Pane attached={false}>
+          <Settings />
+        </Tab.Pane>
+      ),
+    },
   ];
   return (
     <Tab menu={{ fluid: true, vertical: true, tabular: true }} panes={panes} />
@@ -98,7 +134,7 @@ const Settings = () => {
     { menuItem: "General", render: () => <Tab.Pane>Tab 3 Content</Tab.Pane> },
   ];
   return (
-    <Tab menu={{ fluid: true, vertical: true, tabular: true }} panes={panes} />
+    <Tab menu={{ fluid: true, vertical: false, tabular: true }} panes={panes} />
   );
 };
 
@@ -115,7 +151,7 @@ const Statistics = () => {
     { menuItem: "No shows", render: () => <Tab.Pane>Tab 3 Content</Tab.Pane> },
   ];
   return (
-    <Tab menu={{ fluid: true, vertical: true, tabular: true }} panes={panes} />
+    <Tab menu={{ fluid: true, vertical: false, tabular: true }} panes={panes} />
   );
 };
 

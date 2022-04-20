@@ -34,13 +34,13 @@ const createComment = async (req, res, next) => {
   }
 };
 
-const fetchComments = async (req, res, next) => {
+const fetchBusinessComments = async (req, res, next) => {
   try {
     const businessId = req.params.id;
-    const comments = await Comment.find({ businessId: businessId }).populate(
-      "clientId",
-      "name -_id"
-    );
+    const comments = await Comment.find(
+      { businessId: businessId },
+      "-businessId"
+    ).populate("clientId", "name -_id");
     return res.status(200).json({ comments: comments });
   } catch (error) {
     console.log(error);
@@ -75,7 +75,31 @@ const deleteComment = async (req, res, next) => {
   }
 };
 
+const replyComment = async (req, res, next) => {
+  try {
+    const businessId = req.businessId;
+    const commentId = req.params.id;
+    const { reply } = req.body;
+
+    const comment = await Comment.findById(commentId);
+
+    if (comment.businessId.toString() !== businessId.toString()) {
+      return res
+        .status(400)
+        .send({ message: "You can only reply to your own comments" });
+    }
+    comment.reply = reply;
+    await comment.save();
+
+    return res.status(200).json({ message: comment });
+  } catch (error) {
+    console.log(error);
+    return res.status(404).send({ message: "Could not find any comments" });
+  }
+};
+
 exports.fetchUserComments = fetchUserComments;
 exports.createComment = createComment;
-exports.fetchComments = fetchComments;
+exports.fetchBusinessComments = fetchBusinessComments;
 exports.deleteComment = deleteComment;
+exports.replyComment = replyComment;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
   Icon,
@@ -6,17 +6,22 @@ import {
   Rating,
   Message,
   Loader,
+  TextArea,
+  Form,
+  Confirm,
 } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchUserComments,
-  deleteComment,
+  fetchBusinessComments,
+  replyComment,
   reset,
 } from "../features/businesses/comments/commentSlice.js";
 
-const UserComments = () => {
+const BusinessComments = () => {
   const dispatch = useDispatch();
   const [comments, setComments] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [reply, setReply] = useState({ id: "", reply: "" });
   const [error, setError] = useState(null);
   const { user } = useSelector((state) => state.auth);
   const { isLoading, isError, message, isSuccess } = useSelector(
@@ -24,7 +29,7 @@ const UserComments = () => {
   );
 
   useEffect(() => {
-    dispatch(fetchUserComments(user.userId));
+    dispatch(fetchBusinessComments(user.businessId));
   }, []);
 
   useEffect(() => {
@@ -36,7 +41,11 @@ const UserComments = () => {
       if (Array.isArray(message)) {
         setComments(message);
       } else {
-        setComments((prev) => prev.filter((c) => c._id !== message));
+        let comment = comments.find((c) => c._id === reply.id);
+        let filtered = comments.filter((c) => c._id !== reply.id);
+        comment = { ...comment, reply: reply.reply };
+        setComments((prev) => [comment, ...filtered]);
+        setOpen(false);
       }
     }
 
@@ -45,8 +54,49 @@ const UserComments = () => {
     };
   }, [isError, isSuccess, message, dispatch]);
 
-  const deleteHandler = (id) => {
-    dispatch(deleteComment(id));
+  //   const deleteHandler = (id) => {
+  //     dispatch(deleteComment(id));
+  //   };
+
+  const handleReply = (id) => {
+    const comment = comments.find((c) => c._id === id);
+    setReply({ id: id, reply: comment.reply });
+    setOpen(true);
+  };
+
+  const ReplyModal = () => {
+    return (
+      <Confirm
+        open={open}
+        content={() => {
+          return (
+            <Form style={{ padding: 10 }}>
+              <TextArea
+                onChange={(e) => {
+                  setReply({ ...reply, reply: e.target.value });
+                }}
+                style={{ resize: "none", padding: 10 }}
+                value={reply.reply}
+                placeholder="Reply..."
+              />
+            </Form>
+          );
+        }}
+        header="Reply"
+        onCancel={() => setOpen(false)}
+        confirmButton={() => (
+          <Button
+            onClick={() => {
+              dispatch(replyComment(reply));
+            }}
+            loading={isLoading}
+            color="teal"
+          >
+            Reply
+          </Button>
+        )}
+      />
+    );
   };
 
   return (
@@ -55,7 +105,7 @@ const UserComments = () => {
         (comments.length === 0 && !error && (
           <Message negative>
             <Message.Header>Hmmm</Message.Header>
-            <p>You have not made any comments yet</p>
+            <p>You dont have any comments yet</p>
           </Message>
         ))}
       {error && (
@@ -65,6 +115,7 @@ const UserComments = () => {
         </Message>
       )}
       {isLoading && !error && <Loader size="big" />}
+      {ReplyModal()}
       {!isLoading && !error && comments.length > 0 && (
         <Table celled>
           <Table.Header>
@@ -83,7 +134,7 @@ const UserComments = () => {
               comments.length > 0 &&
               comments.map((c) => (
                 <Table.Row key={c._id}>
-                  <Table.Cell>{c.businessId.name}</Table.Cell>
+                  <Table.Cell>{c.clientId.name}</Table.Cell>
                   <Table.Cell>{c.comment}</Table.Cell>
                   <Table.Cell>
                     <Rating
@@ -95,14 +146,18 @@ const UserComments = () => {
                   <Table.Cell>{c.created}</Table.Cell>
                   <Table.Cell>{c.reply}</Table.Cell>
                   <Table.Cell>
+                    <Button onClick={() => {}} basic color="red" fluid icon>
+                      <Icon name="delete" />
+                    </Button>
+                    <br />
                     <Button
-                      onClick={() => deleteHandler(c._id)}
+                      onClick={() => handleReply(c._id)}
                       basic
-                      color="red"
+                      color="green"
                       fluid
                       icon
                     >
-                      <Icon name="delete" />
+                      <Icon name="reply" />
                     </Button>
                   </Table.Cell>
                 </Table.Row>
@@ -114,4 +169,4 @@ const UserComments = () => {
   );
 };
 
-export default UserComments;
+export default BusinessComments;

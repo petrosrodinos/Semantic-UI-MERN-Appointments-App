@@ -15,7 +15,7 @@ const createComment = async (userData, token) => {
   return data.comment;
 };
 
-const fetchComments = async (id) => {
+const fetchBusinessComments = async (id) => {
   const { data } = await axios.get(
     `${process.env.REACT_APP_API_URL}business/comments/${id}`
   );
@@ -45,11 +45,27 @@ const deleteComment = async (id, token) => {
   return data.id;
 };
 
+const replyComment = async (reply, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const { data } = await axios.patch(
+    `${process.env.REACT_APP_API_URL}business/comments/${reply.id}`,
+    { reply: reply.reply },
+    config
+  );
+  return data.message;
+};
+
 const commentService = {
   createComment,
-  fetchComments,
+  fetchBusinessComments,
   fetchUserComments,
   deleteComment,
+  replyComment,
 };
 
 export default commentService;
