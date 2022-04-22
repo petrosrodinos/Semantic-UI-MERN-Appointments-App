@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Button, Icon, Table, Message, Loader, Popup } from "semantic-ui-react";
+import {
+  Button,
+  Icon,
+  Table,
+  Message,
+  Loader,
+  Popup,
+  Dropdown,
+} from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAppointments,
@@ -7,8 +15,9 @@ import {
   reset,
 } from "../features/appointments/appointmentSlice";
 
-const BusinessAppointments = () => {
+const BusinessAppointments = ({ day }) => {
   const [state, setState] = useState([]);
+  const [filtered, setFiltered] = useState(null);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const { isLoading, isError, message, isSuccess } = useSelector(
@@ -66,6 +75,19 @@ const BusinessAppointments = () => {
     }
   };
 
+  const handleChange = (value) => {
+    setFiltered(state);
+    if (value === "Checked In") {
+      setFiltered(state.filter((item) => item.status === "completed"));
+    } else if (value === "Cancelled") {
+      setFiltered(state.filter((item) => item.status === "cancelled"));
+    } else if (value === "Pending") {
+      setFiltered(state.filter((item) => item.status === "created"));
+    }
+    // else {
+    //   setFiltered(state);
+    // }
+  };
   useEffect(() => {
     dispatch(fetchAppointments("business"));
   }, []);
@@ -96,62 +118,86 @@ const BusinessAppointments = () => {
     };
   }, [isError, isSuccess, message, dispatch]);
 
+  const TableRow = ({ s }) => {
+    return (
+      <Table.Row
+        positive={s.status === "completed"}
+        error={s.status === "cancelled"}
+        key={s._id}
+      >
+        <Table.Cell>{s.clientId.name}</Table.Cell>
+        <Table.Cell>{s.clientId.phone}</Table.Cell>
+        <Table.Cell>{s.date}</Table.Cell>
+        <Table.Cell>{s.time}</Table.Cell>
+        <Table.Cell>
+          <Actions show={s.status === "created"} id={s._id} />
+        </Table.Cell>
+      </Table.Row>
+    );
+  };
+
   return (
     <>
+      <Dropdown text="Filters" icon="filter" labeled button className="icon">
+        <Dropdown.Menu>
+          <Dropdown.Item onClick={(e) => handleChange(e.target.textContent)}>
+            All
+          </Dropdown.Item>
+          <Dropdown.Item onClick={(e) => handleChange(e.target.textContent)}>
+            Checked In
+          </Dropdown.Item>
+          <Dropdown.Item onClick={(e) => handleChange(e.target.textContent)}>
+            Cancelled
+          </Dropdown.Item>
+          <Dropdown.Item onClick={(e) => handleChange(e.target.textContent)}>
+            Pending
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
       {!state ||
         (state.length === 0 && !error && (
           <Message negative>
             <Message.Header>Hmmm</Message.Header>
-            <p>You have not appointments yet</p>
+            <p>Could not find any appointments</p>
           </Message>
         ))}
       {isLoading && !error && <Loader size="big" />}
-      {!isLoading && state.length > 0 && (
-        <Table stackable celled>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>Name</Table.HeaderCell>
-              <Table.HeaderCell>Phone</Table.HeaderCell>
-              <Table.HeaderCell>Date</Table.HeaderCell>
-              <Table.HeaderCell>Time</Table.HeaderCell>
-              <Table.HeaderCell>Actions</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
 
-          <Table.Body>
-            {state.map((s) => (
-              <Table.Row
-                positive={s.status === "completed"}
-                error={s.status === "cancelled"}
-                key={s._id}
-              >
-                <Table.Cell>{s.clientId.name}</Table.Cell>
-                <Table.Cell>{s.clientId.phone}</Table.Cell>
-                <Table.Cell>{s.date}</Table.Cell>
-                <Table.Cell>{s.time}</Table.Cell>
-                <Table.Cell>
-                  <Actions show={s.status === "created"} id={s._id} />
-                </Table.Cell>
+      {!isLoading && state.length > 0 && (
+        <>
+          <Table stackable celled>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Name</Table.HeaderCell>
+                <Table.HeaderCell>Phone</Table.HeaderCell>
+                <Table.HeaderCell>Date</Table.HeaderCell>
+                <Table.HeaderCell>Time</Table.HeaderCell>
+                <Table.HeaderCell>Actions</Table.HeaderCell>
               </Table.Row>
-            ))}
-          </Table.Body>
-          <Table.Footer fullWidth>
-            <Table.Row>
-              <Table.HeaderCell />
-              <Table.HeaderCell colSpan="4">
-                <Button
-                  floated="right"
-                  icon
-                  labelPosition="left"
-                  color="teal"
-                  size="small"
-                >
-                  <Icon name="add" /> Add Appointment
-                </Button>
-              </Table.HeaderCell>
-            </Table.Row>
-          </Table.Footer>
-        </Table>
+            </Table.Header>
+
+            <Table.Body>
+              {!filtered && state.map((s) => <TableRow s={s} />)}
+              {filtered && filtered.map((s) => <TableRow s={s} />)}
+            </Table.Body>
+            <Table.Footer fullWidth>
+              <Table.Row>
+                <Table.HeaderCell />
+                <Table.HeaderCell colSpan="4">
+                  <Button
+                    floated="right"
+                    icon
+                    labelPosition="left"
+                    color="teal"
+                    size="small"
+                  >
+                    <Icon name="add" /> Add Appointment
+                  </Button>
+                </Table.HeaderCell>
+              </Table.Row>
+            </Table.Footer>
+          </Table>
+        </>
       )}
       {error && (
         <Message negative>

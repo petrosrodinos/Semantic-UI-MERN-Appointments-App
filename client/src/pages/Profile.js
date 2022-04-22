@@ -81,7 +81,7 @@ const Business = () => {
       render: () => (
         <Tab.Pane>
           {" "}
-          <BusinessAppointments />
+          <BusinessAppointments today />
         </Tab.Pane>
       ),
     },
