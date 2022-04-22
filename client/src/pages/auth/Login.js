@@ -5,7 +5,6 @@ import {
   Form,
   Container,
   Message,
-  Loader,
   Segment,
 } from "semantic-ui-react";
 import { useSelector, useDispatch } from "react-redux";

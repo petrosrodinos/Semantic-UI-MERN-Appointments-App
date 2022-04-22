@@ -7,6 +7,7 @@ import {
   Loader,
   Popup,
   Dropdown,
+  Input,
 } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -15,8 +16,14 @@ import {
   fetchTodaysAppointments,
   reset,
 } from "../features/appointments/appointmentSlice";
+import AppointmentFilters from "./AppointmentFilters";
 
 const BusinessAppointments = ({ todays }) => {
+  const options = [
+    { key: "all", text: "All", value: "all" },
+    { key: "articles", text: "Articles", value: "articles" },
+    { key: "products", text: "Products", value: "products" },
+  ];
   const [state, setState] = useState([]);
   const [filtered, setFiltered] = useState(null);
   const [error, setError] = useState(null);
@@ -87,6 +94,27 @@ const BusinessAppointments = ({ todays }) => {
     }
   };
 
+  const handleSearch = (e, { name, value }) => {
+    setFiltered(state);
+    if (name === "name") {
+      setFiltered(
+        state.filter((item) => item.clientId.name.toLowerCase().includes(value))
+      );
+    } else if (name === "phone") {
+      setFiltered(
+        state.filter((item) =>
+          item.clientId.phone.toLowerCase().includes(value)
+        )
+      );
+    } else if (name === "date") {
+      setFiltered(
+        state.filter((item) =>
+          item.date.includes(new Date(value).toDateString())
+        )
+      );
+    }
+  };
+
   useEffect(() => {
     if (todays) {
       dispatch(fetchTodaysAppointments());
@@ -145,22 +173,11 @@ const BusinessAppointments = ({ todays }) => {
 
   return (
     <>
-      <Dropdown text="Filters" icon="filter" labeled button className="icon">
-        <Dropdown.Menu>
-          <Dropdown.Item onClick={(e) => handleChange(e.target.textContent)}>
-            All
-          </Dropdown.Item>
-          <Dropdown.Item onClick={(e) => handleChange(e.target.textContent)}>
-            Checked In
-          </Dropdown.Item>
-          <Dropdown.Item onClick={(e) => handleChange(e.target.textContent)}>
-            Cancelled
-          </Dropdown.Item>
-          <Dropdown.Item onClick={(e) => handleChange(e.target.textContent)}>
-            Pending
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
+      <AppointmentFilters
+        todays={todays}
+        handleChange={handleChange}
+        handleSearch={handleSearch}
+      />
       {!state ||
         (state.length === 0 && !error && (
           <Message negative>
