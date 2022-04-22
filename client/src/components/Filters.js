@@ -86,6 +86,10 @@ const Filters = () => {
           />
           <h3 className="tealcolor">Day</h3>
           <DateInput
+            dateFormat="MM-DD-YYYY"
+            closable
+            closeOnMouseLeave
+            minDate={new Date()}
             style={{ color: "teal" }}
             fluid
             placeholder="Date"
@@ -96,6 +100,7 @@ const Filters = () => {
           />
           <h3 className="tealcolor">Time</h3>
           <TimeInput
+            closable
             style={{ color: "teal" }}
             fluid
             name="from"
@@ -106,6 +111,7 @@ const Filters = () => {
           />
           <br />
           <TimeInput
+            closable
             style={{ color: "teal" }}
             fluid
             name="to"

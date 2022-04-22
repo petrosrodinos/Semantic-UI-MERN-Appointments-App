@@ -24,27 +24,10 @@ const fetchBusiness = async (id) => {
   return data.business;
 };
 
-const createComment = async (userData, token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
-  const { data } = await axios.post(
-    `${process.env.REACT_APP_API_URL}business/comment`,
-    userData,
-    config
-  );
-
-  return data;
-};
-
 const businessService = {
   createBusiness,
   fetchBusinesses,
   fetchBusiness,
-  createComment,
 };
 
 export default businessService;

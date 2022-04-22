@@ -26,7 +26,6 @@ const createComment = async (req, res, next) => {
     });
 
     await comment.save();
-
     return res.status(200).json({ comment: comment });
   } catch (error) {
     console.log(error);
@@ -81,7 +80,10 @@ const replyComment = async (req, res, next) => {
     const commentId = req.params.id;
     const { reply } = req.body;
 
-    const comment = await Comment.findById(commentId);
+    const comment = await Comment.findById(commentId).populate(
+      "clientId",
+      "name"
+    );
 
     if (comment.businessId.toString() !== businessId.toString()) {
       return res

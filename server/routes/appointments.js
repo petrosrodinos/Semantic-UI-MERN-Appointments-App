@@ -6,5 +6,10 @@ const router = express.Router();
 
 router.post("/appointment", protect, appointmentsController.createAppointment);
 router.get("/appointment", protect, appointmentsController.fetchAppointments);
+router.patch(
+  "/appointment/:id",
+  protect,
+  appointmentsController.changeAppointmentStatus
+);
 
 module.exports = router;

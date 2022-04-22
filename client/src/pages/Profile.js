@@ -1,6 +1,7 @@
 import React from "react";
 import { Tab } from "semantic-ui-react";
-import Appointments from "../components/Appointments";
+import UserAppointments from "../components/UserAppointments";
+import BusinessAppointments from "../components/BusinessAppointments";
 import UserComments from "../components/UserComments";
 import BusinessComments from "../components/BusinessComments";
 import { useSelector } from "react-redux";
@@ -46,7 +47,7 @@ const User = () => {
       render: () => (
         <Tab.Pane>
           {" "}
-          <Appointments profile />
+          <UserAppointments />
         </Tab.Pane>
       ),
     },
@@ -80,7 +81,7 @@ const Business = () => {
       render: () => (
         <Tab.Pane>
           {" "}
-          <Appointments business />
+          <BusinessAppointments />
         </Tab.Pane>
       ),
     },
@@ -89,7 +90,7 @@ const Business = () => {
       render: () => (
         <Tab.Pane>
           {" "}
-          <Appointments business />
+          <BusinessAppointments />
         </Tab.Pane>
       ),
     },

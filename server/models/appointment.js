@@ -7,6 +7,7 @@ const appSchema = new Schema({
   date: { type: String, required: true },
   timeId: { type: String, required: true },
   time: { type: String, required: true },
+  status: { type: String, default: "created" },
   clientId: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
   businessId: {
     type: mongoose.Types.ObjectId,

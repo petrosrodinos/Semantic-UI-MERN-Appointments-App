@@ -87,6 +87,7 @@ const UserComments = () => {
                   <Table.Cell>{c.comment}</Table.Cell>
                   <Table.Cell>
                     <Rating
+                      disabled
                       icon="star"
                       defaultRating={c.rating}
                       maxRating={5}

@@ -41,10 +41,11 @@ const BusinessComments = () => {
       if (Array.isArray(message)) {
         setComments(message);
       } else {
-        let comment = comments.find((c) => c._id === reply.id);
-        let filtered = comments.filter((c) => c._id !== reply.id);
-        comment = { ...comment, reply: reply.reply };
-        setComments((prev) => [comment, ...filtered]);
+        let temp = comments;
+        let index = temp.findIndex((c) => c._id === message._id);
+        let filtered = temp.filter((c) => c._id !== reply.id);
+        filtered.splice(index, 0, message);
+        setComments(filtered);
         setOpen(false);
       }
     }
@@ -53,10 +54,6 @@ const BusinessComments = () => {
       dispatch(reset());
     };
   }, [isError, isSuccess, message, dispatch]);
-
-  //   const deleteHandler = (id) => {
-  //     dispatch(deleteComment(id));
-  //   };
 
   const handleReply = (id) => {
     const comment = comments.find((c) => c._id === id);
@@ -138,6 +135,7 @@ const BusinessComments = () => {
                   <Table.Cell>{c.comment}</Table.Cell>
                   <Table.Cell>
                     <Rating
+                      disabled
                       icon="star"
                       defaultRating={c.rating}
                       maxRating={5}
@@ -146,10 +144,6 @@ const BusinessComments = () => {
                   <Table.Cell>{c.created}</Table.Cell>
                   <Table.Cell>{c.reply}</Table.Cell>
                   <Table.Cell>
-                    <Button onClick={() => {}} basic color="red" fluid icon>
-                      <Icon name="delete" />
-                    </Button>
-                    <br />
                     <Button
                       onClick={() => handleReply(c._id)}
                       basic

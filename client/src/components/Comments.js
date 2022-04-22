@@ -46,7 +46,6 @@ const Comments = ({ id, name }) => {
       if (Array.isArray(message)) {
         setComments(message);
       } else if (typeof message === "object" && !Array.isArray(message)) {
-        console.log(message);
         setComments([...comments, message]);
       }
       setComment({ ucomment: "", rating: 5 });

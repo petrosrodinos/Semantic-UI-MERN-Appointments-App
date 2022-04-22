@@ -119,8 +119,8 @@ const AppointmentCard = ({ hours, id, name }) => {
           <DateInput
             dateFormat="MM-DD-YYYY"
             closable
-            minDate={new Date()}
             closeOnMouseLeave
+            minDate={new Date()}
             style={{ color: "teal", width: "100%" }}
             fluid
             placeholder="Date"

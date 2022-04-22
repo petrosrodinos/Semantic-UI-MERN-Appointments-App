@@ -30,9 +30,25 @@ const createAppointment = async (appointment, token) => {
   return response.data.message;
 };
 
+const changeAppointmentStatus = async (appointment, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const response = await axios.patch(
+    `${process.env.REACT_APP_API_URL}appointment/${appointment.id}`,
+    { status: appointment.status, role: appointment.role },
+    config
+  );
+  return response.data.message;
+};
+
 const appointmentService = {
   fetchAppointments,
   createAppointment,
+  changeAppointmentStatus,
 };
 
 export default appointmentService;

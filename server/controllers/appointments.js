@@ -24,20 +24,15 @@ const createAppointment = async (req, res, next) => {
 const fetchAppointments = async (req, res, next) => {
   try {
     const params =
-      req.query.type === "profile"
+      req.query.type === "user"
         ? { clientId: req.userId }
         : { businessId: req.businessId };
 
-    const populate = req.query.type === "profile" ? "businessId" : "clientId";
+    const populate = req.query.type === "user" ? "businessId" : "clientId";
 
-    const exlude =
-      req.query.type === "profile"
-        ? "name phone date time -_id"
-        : "name phone date time -_id";
-
-    const appointments = await Appointment.find(params, exlude).populate(
+    const appointments = await Appointment.find(params, "-timeId").populate(
       populate,
-      exlude
+      "name phone -_id"
     );
 
     return res.status(200).json({ message: appointments });
@@ -45,9 +40,62 @@ const fetchAppointments = async (req, res, next) => {
     console.log(error);
     return res
       .status(400)
-      .send({ message: "Could not create your appointment" });
+      .send({ message: "Could not find your appointments" });
+  }
+};
+
+const changeAppointmentStatus = async (req, res, next) => {
+  try {
+    const { status, role } = req.body;
+
+    let populate = role === "user" ? "businessId" : "clientId";
+
+    console.log(populate);
+
+    const appointment = await Appointment.findById(req.params.id).populate(
+      populate,
+      "name phone"
+    );
+
+    if (!appointment) {
+      return res
+        .status(400)
+        .send({ message: "Something went wrong please try again" });
+    }
+
+    if (
+      !role ||
+      (String(role) === "user" &&
+        String(req.userId) !== String(appointment.clientId._id))
+    ) {
+      return res.status(401).send({
+        message: "You are not authorized to change this appointment.",
+      });
+    }
+
+    if (
+      !role ||
+      (String(role) === "business" &&
+        String(req.businessId) !== String(appointment.businessId._id))
+    ) {
+      return res
+        .status(401)
+        .send({ message: "You are not authorized to change this appointment" });
+    }
+
+    appointment.status = status;
+
+    await appointment.save();
+
+    return res.status(200).json({ message: appointment });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .send({ message: "Could not change your appointment status" });
   }
 };
 
 exports.createAppointment = createAppointment;
 exports.fetchAppointments = fetchAppointments;
+exports.changeAppointmentStatus = changeAppointmentStatus;
