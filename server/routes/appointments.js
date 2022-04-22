@@ -6,6 +6,11 @@ const router = express.Router();
 
 router.post("/appointment", protect, appointmentsController.createAppointment);
 router.get("/appointment", protect, appointmentsController.fetchAppointments);
+router.get(
+  "/appointment/today",
+  protect,
+  appointmentsController.fetchTodaysAppointments
+);
 router.patch(
   "/appointment/:id",
   protect,

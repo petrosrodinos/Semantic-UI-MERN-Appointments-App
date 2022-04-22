@@ -4,7 +4,7 @@ const createAppointment = async (req, res, next) => {
   try {
     const { date, timeId, businessId, time } = req.body;
     const appointment = new Appointment({
-      date,
+      date: new Date(date).toDateString(),
       timeId,
       businessId,
       clientId: req.userId,
@@ -15,6 +15,7 @@ const createAppointment = async (req, res, next) => {
 
     return res.status(200).json({ message: "OK" });
   } catch (error) {
+    console.log(error);
     return res
       .status(400)
       .send({ message: "Could not create your appointment" });
@@ -30,10 +31,30 @@ const fetchAppointments = async (req, res, next) => {
 
     const populate = req.query.type === "user" ? "businessId" : "clientId";
 
-    const appointments = await Appointment.find(params, "-timeId").populate(
-      populate,
-      "name phone -_id"
-    );
+    const appointments = await Appointment.find(params, "-timeId")
+      .sort({ date: "desc" })
+      .populate(populate, "name phone -_id");
+
+    return res.status(200).json({ message: appointments });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(400)
+      .send({ message: "Could not find your appointments" });
+  }
+};
+
+const fetchTodaysAppointments = async (req, res, next) => {
+  try {
+    const appointments = await Appointment.find(
+      {
+        businessId: req.businessId,
+        date: new Date().toDateString(),
+      },
+      "-timeId"
+    )
+      .sort({ date: "asc" })
+      .populate("clientId", "name phone -_id");
 
     return res.status(200).json({ message: appointments });
   } catch (error) {
@@ -49,8 +70,6 @@ const changeAppointmentStatus = async (req, res, next) => {
     const { status, role } = req.body;
 
     let populate = role === "user" ? "businessId" : "clientId";
-
-    console.log(populate);
 
     const appointment = await Appointment.findById(req.params.id).populate(
       populate,
@@ -99,3 +118,4 @@ const changeAppointmentStatus = async (req, res, next) => {
 exports.createAppointment = createAppointment;
 exports.fetchAppointments = fetchAppointments;
 exports.changeAppointmentStatus = changeAppointmentStatus;
+exports.fetchTodaysAppointments = fetchTodaysAppointments;

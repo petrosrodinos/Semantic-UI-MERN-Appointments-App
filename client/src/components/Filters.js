@@ -60,7 +60,6 @@ const Filters = () => {
 
   const handleChange = (e, { name, value }) => {
     setFilters({ ...filters, [name]: value });
-    console.log(filters);
   };
 
   return (

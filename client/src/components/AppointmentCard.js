@@ -48,6 +48,7 @@ const AppointmentCard = ({ hours, id, name }) => {
     if (isSuccess) {
       navigate("/");
     }
+    setConfirm({ ...confirm, open: false });
 
     return () => {
       dispatch(reset());
@@ -113,7 +114,7 @@ const AppointmentCard = ({ hours, id, name }) => {
           </Card.Header>
         </Card.Content>
         <Card.Content>
-          {error && error}
+          {error && <Message negative>{error}</Message>}
           {isLoading && <h3>loading...</h3>}
           <h3>Date</h3>
           <DateInput

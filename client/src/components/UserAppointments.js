@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Button, Table, Message, Loader, Popup } from "semantic-ui-react";
+import {
+  Button,
+  Table,
+  Message,
+  Loader,
+  Popup,
+  Dropdown,
+} from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAppointments,
@@ -9,6 +16,8 @@ import {
 
 const UserAppointments = () => {
   const [state, setState] = useState([]);
+  const [filtered, setFiltered] = useState(null);
+
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const { isLoading, isError, message, isSuccess } = useSelector(
@@ -45,6 +54,40 @@ const UserAppointments = () => {
         </Button.Group>
       );
     }
+  };
+
+  const handleChange = (value) => {
+    setFiltered(state);
+    if (value === "Checked In") {
+      setFiltered(state.filter((item) => item.status === "completed"));
+    } else if (value === "Cancelled") {
+      setFiltered(state.filter((item) => item.status === "cancelled"));
+    } else if (value === "Pending") {
+      setFiltered(state.filter((item) => item.status === "created"));
+    }
+  };
+
+  const TableRow = ({ s }) => {
+    return (
+      <Table.Row
+        positive={s.status === "completed"}
+        error={s.status === "cancelled"}
+        key={s._id}
+      >
+        <Table.Cell>{s.businessId.name}</Table.Cell>
+        <Table.Cell>{s.businessId.phone}</Table.Cell>
+        <Table.Cell>{s.date}</Table.Cell>
+        <Table.Cell>{s.time}</Table.Cell>
+        <Table.Cell>{s.created}</Table.Cell>
+        <Table.Cell>
+          {s.status === "created" ? (
+            <Actions show={s.status === "created"} id={s._id} />
+          ) : (
+            <p>{s.status.toUpperCase()}</p>
+          )}
+        </Table.Cell>
+      </Table.Row>
+    );
   };
 
   useEffect(() => {
@@ -87,37 +130,55 @@ const UserAppointments = () => {
         ))}
       {isLoading && !error && <Loader size="big" />}
       {!isLoading && state.length > 0 && (
-        <Table celled stackable>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>Name</Table.HeaderCell>
-              <Table.HeaderCell>Phone</Table.HeaderCell>
-              <Table.HeaderCell>Date</Table.HeaderCell>
-              <Table.HeaderCell>Time</Table.HeaderCell>
-              <Table.HeaderCell>Created</Table.HeaderCell>
-              <Table.HeaderCell>Actions</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-
-          <Table.Body>
-            {state.map((s) => (
-              <Table.Row
-                positive={s.status === "completed"}
-                error={s.status === "cancelled"}
-                key={s._id}
+        <>
+          <Dropdown
+            text="Filters"
+            icon="filter"
+            labeled
+            button
+            className="icon"
+          >
+            <Dropdown.Menu>
+              <Dropdown.Item
+                onClick={(e) => handleChange(e.target.textContent)}
               >
-                <Table.Cell>{s.businessId.name}</Table.Cell>
-                <Table.Cell>{s.businessId.phone}</Table.Cell>
-                <Table.Cell>{s.date}</Table.Cell>
-                <Table.Cell>{s.time}</Table.Cell>
-                <Table.Cell>{s.created}</Table.Cell>
-                <Table.Cell>
-                  <Actions show={s.status === "created"} id={s._id} />
-                </Table.Cell>
+                All
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={(e) => handleChange(e.target.textContent)}
+              >
+                Checked In
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={(e) => handleChange(e.target.textContent)}
+              >
+                Cancelled
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={(e) => handleChange(e.target.textContent)}
+              >
+                Pending
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+          <Table celled stackable>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Name</Table.HeaderCell>
+                <Table.HeaderCell>Phone</Table.HeaderCell>
+                <Table.HeaderCell>Date</Table.HeaderCell>
+                <Table.HeaderCell>Time</Table.HeaderCell>
+                <Table.HeaderCell>Created</Table.HeaderCell>
+                <Table.HeaderCell>Actions</Table.HeaderCell>
               </Table.Row>
-            ))}
-          </Table.Body>
-        </Table>
+            </Table.Header>
+
+            <Table.Body>
+              {!filtered && state.map((s) => <TableRow s={s} />)}
+              {filtered && filtered.map((s) => <TableRow s={s} />)}
+            </Table.Body>
+          </Table>
+        </>
       )}
       {error && (
         <Message negative>

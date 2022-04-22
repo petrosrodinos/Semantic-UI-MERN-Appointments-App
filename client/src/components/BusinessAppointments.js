@@ -12,10 +12,11 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAppointments,
   changeAppointmentStatus,
+  fetchTodaysAppointments,
   reset,
 } from "../features/appointments/appointmentSlice";
 
-const BusinessAppointments = ({ day }) => {
+const BusinessAppointments = ({ todays }) => {
   const [state, setState] = useState([]);
   const [filtered, setFiltered] = useState(null);
   const [error, setError] = useState(null);
@@ -84,13 +85,15 @@ const BusinessAppointments = ({ day }) => {
     } else if (value === "Pending") {
       setFiltered(state.filter((item) => item.status === "created"));
     }
-    // else {
-    //   setFiltered(state);
-    // }
   };
+
   useEffect(() => {
+    if (todays) {
+      dispatch(fetchTodaysAppointments());
+      return;
+    }
     dispatch(fetchAppointments("business"));
-  }, []);
+  }, [todays]);
 
   useEffect(() => {
     if (isError) {
@@ -130,7 +133,11 @@ const BusinessAppointments = ({ day }) => {
         <Table.Cell>{s.date}</Table.Cell>
         <Table.Cell>{s.time}</Table.Cell>
         <Table.Cell>
-          <Actions show={s.status === "created"} id={s._id} />
+          {s.status === "created" ? (
+            <Actions show={s.status === "created"} id={s._id} />
+          ) : (
+            <p>{s.status.toUpperCase()}</p>
+          )}
         </Table.Cell>
       </Table.Row>
     );
@@ -161,7 +168,7 @@ const BusinessAppointments = ({ day }) => {
             <p>Could not find any appointments</p>
           </Message>
         ))}
-      {isLoading && !error && <Loader size="big" />}
+      {isLoading && !error && <Loader size="massive" />}
 
       {!isLoading && state.length > 0 && (
         <>
@@ -180,22 +187,24 @@ const BusinessAppointments = ({ day }) => {
               {!filtered && state.map((s) => <TableRow s={s} />)}
               {filtered && filtered.map((s) => <TableRow s={s} />)}
             </Table.Body>
-            <Table.Footer fullWidth>
-              <Table.Row>
-                <Table.HeaderCell />
-                <Table.HeaderCell colSpan="4">
-                  <Button
-                    floated="right"
-                    icon
-                    labelPosition="left"
-                    color="teal"
-                    size="small"
-                  >
-                    <Icon name="add" /> Add Appointment
-                  </Button>
-                </Table.HeaderCell>
-              </Table.Row>
-            </Table.Footer>
+            {!todays && (
+              <Table.Footer fullWidth>
+                <Table.Row>
+                  <Table.HeaderCell />
+                  <Table.HeaderCell colSpan="4">
+                    <Button
+                      floated="right"
+                      icon
+                      labelPosition="left"
+                      color="teal"
+                      size="small"
+                    >
+                      <Icon name="add" /> Add Appointment
+                    </Button>
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Footer>
+            )}
           </Table>
         </>
       )}

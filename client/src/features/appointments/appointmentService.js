@@ -15,6 +15,21 @@ const fetchAppointments = async (type, token) => {
   return response.data.message;
 };
 
+const fetchTodaysAppointments = async (token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const response = await axios.get(
+    `${process.env.REACT_APP_API_URL}appointment/today`,
+    config
+  );
+
+  return response.data.message;
+};
+
 const createAppointment = async (appointment, token) => {
   const config = {
     headers: {
@@ -49,6 +64,7 @@ const appointmentService = {
   fetchAppointments,
   createAppointment,
   changeAppointmentStatus,
+  fetchTodaysAppointments,
 };
 
 export default appointmentService;
