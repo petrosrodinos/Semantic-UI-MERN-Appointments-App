@@ -56,13 +56,13 @@ const BusinessCard = ({ data, profile, children }) => {
               {`${data.address} ${data.city} ${data.area}`}
             </b>
           </Grid.Row>
-          <Grid.Row centered mobile={16} tablet={8} computer={5}>
+          <Grid.Row centered>
             <b style={style}>
               <Icon size="large" name="mail" color="teal" />
               {data.email}
             </b>
           </Grid.Row>
-          <Grid.Row centered mobile={16} tablet={8} computer={5}>
+          <Grid.Row centered>
             <b style={style}>
               <Icon size="large" name="phone" color="teal" />
               {data.phone}
@@ -97,7 +97,6 @@ const BusinessCard = ({ data, profile, children }) => {
 };
 
 const style = {
-  paddingRight: 10,
   color: "teal",
 };
 

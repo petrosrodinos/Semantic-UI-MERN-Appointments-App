@@ -62,7 +62,6 @@ const AppointmentFilters = ({ handleChange, handleSearch, todays }) => {
               closable
               fluid
               closeOnMouseLeave
-              minDate={new Date()}
               placeholder="Date"
               iconPosition="left"
               name="date"
