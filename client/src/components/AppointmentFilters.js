@@ -25,7 +25,7 @@ const AppointmentFilters = ({ handleChange, handleSearch, todays }) => {
             <Dropdown.Menu>
               <Dropdown.Item onClick={handleDropdownChange}>All</Dropdown.Item>
               <Dropdown.Item onClick={handleDropdownChange}>
-                Checked In
+                Completed
               </Dropdown.Item>
               <Dropdown.Item onClick={handleDropdownChange}>
                 Cancelled

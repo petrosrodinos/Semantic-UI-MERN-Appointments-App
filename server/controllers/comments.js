@@ -39,7 +39,9 @@ const fetchBusinessComments = async (req, res, next) => {
     const comments = await Comment.find(
       { businessId: businessId },
       "-businessId"
-    ).populate("clientId", "name -_id");
+    )
+      .sort({ created: "desc" })
+      .populate("clientId", "name -_id");
     return res.status(200).json({ comments: comments });
   } catch (error) {
     console.log(error);

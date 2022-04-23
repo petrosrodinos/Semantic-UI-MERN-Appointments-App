@@ -17,15 +17,15 @@ import {
 const UserAppointments = () => {
   const [state, setState] = useState([]);
   const [filtered, setFiltered] = useState(null);
-
+  const [text, setText] = useState("All");
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const { isLoading, isError, message, isSuccess } = useSelector(
     (state) => state.appointments
   );
 
-  const Actions = ({ id, show }) => {
-    if (show) {
+  const Actions = ({ id, status }) => {
+    if (status === "pending") {
       return (
         <Button.Group fluid basic size="large">
           <Popup
@@ -53,7 +53,14 @@ const UserAppointments = () => {
           />
         </Button.Group>
       );
+    } else {
+      return <p>{status.toUpperCase()}</p>;
     }
+  };
+
+  const handleDropdownChange = (e) => {
+    handleChange(e.target.textContent);
+    setText(e.target.textContent);
   };
 
   const handleChange = (value) => {
@@ -63,7 +70,7 @@ const UserAppointments = () => {
     } else if (value === "Cancelled") {
       setFiltered(state.filter((item) => item.status === "cancelled"));
     } else if (value === "Pending") {
-      setFiltered(state.filter((item) => item.status === "created"));
+      setFiltered(state.filter((item) => item.status === "pending"));
     }
   };
 
@@ -80,11 +87,7 @@ const UserAppointments = () => {
         <Table.Cell>{s.time}</Table.Cell>
         <Table.Cell>{s.created}</Table.Cell>
         <Table.Cell>
-          {s.status === "created" ? (
-            <Actions show={s.status === "created"} id={s._id} />
-          ) : (
-            <p>{s.status.toUpperCase()}</p>
-          )}
+          <Actions status={s.status} id={s._id} />
         </Table.Cell>
       </Table.Row>
     );
@@ -132,31 +135,22 @@ const UserAppointments = () => {
       {!isLoading && state.length > 0 && (
         <>
           <Dropdown
-            text="Filters"
+            text={text}
             icon="filter"
             labeled
             button
+            selection
             className="icon"
           >
             <Dropdown.Menu>
-              <Dropdown.Item
-                onClick={(e) => handleChange(e.target.textContent)}
-              >
-                All
+              <Dropdown.Item onClick={handleDropdownChange}>All</Dropdown.Item>
+              <Dropdown.Item onClick={handleDropdownChange}>
+                Completed
               </Dropdown.Item>
-              <Dropdown.Item
-                onClick={(e) => handleChange(e.target.textContent)}
-              >
-                Checked In
-              </Dropdown.Item>
-              <Dropdown.Item
-                onClick={(e) => handleChange(e.target.textContent)}
-              >
+              <Dropdown.Item onClick={handleDropdownChange}>
                 Cancelled
               </Dropdown.Item>
-              <Dropdown.Item
-                onClick={(e) => handleChange(e.target.textContent)}
-              >
+              <Dropdown.Item onClick={handleDropdownChange}>
                 Pending
               </Dropdown.Item>
             </Dropdown.Menu>

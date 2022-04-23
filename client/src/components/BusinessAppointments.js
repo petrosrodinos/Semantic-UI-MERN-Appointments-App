@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Button, Icon, Table, Message, Loader, Popup } from "semantic-ui-react";
+import { Button, Icon, Table, Message, Loader } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAppointments,
-  changeAppointmentStatus,
   fetchTodaysAppointments,
   reset,
 } from "../features/appointments/appointmentSlice";
 import AppointmentFilters from "./AppointmentFilters";
 import TodaysAppointmentStats from "./TodaysAppointmentStats";
+import AppointmentTableActions from "./AppointmentTableActions";
 
 const BusinessAppointments = ({ todays }) => {
+  const dispatch = useDispatch();
   const [state, setState] = useState([]);
   const [filtered, setFiltered] = useState(null);
   const [error, setError] = useState(null);
@@ -19,72 +20,18 @@ const BusinessAppointments = ({ todays }) => {
     pending: 0,
     cancelled: 0,
   });
-  const dispatch = useDispatch();
   const { isLoading, isError, message, isSuccess } = useSelector(
     (state) => state.appointments
   );
 
-  const Actions = ({ id, show }) => {
-    if (show) {
-      return (
-        <Button.Group fluid basic size="large">
-          {todays && (
-            <Popup
-              content="Check-In"
-              trigger={
-                <Button
-                  onClick={() => {
-                    dispatch(
-                      changeAppointmentStatus({
-                        id,
-                        status: "completed",
-                        role: "business",
-                      })
-                    );
-                  }}
-                  basic
-                  color="green"
-                  icon="check"
-                />
-              }
-            />
-          )}
-          <Popup
-            content="Cancel"
-            trigger={
-              <Button
-                onClick={() =>
-                  dispatch(
-                    changeAppointmentStatus({
-                      id,
-                      status: "cancelled",
-                      role: "business",
-                    })
-                  )
-                }
-                basic
-                color="red"
-                icon="cancel"
-              />
-            }
-          />
-          <Popup
-            content="Edit"
-            trigger={<Button basic color="yellow" icon="edit" />}
-          />
-        </Button.Group>
-      );
-    }
-  };
-
   const handleChange = (value) => {
     setFiltered(state);
-    if (value === "Checked In") {
+    if (value === "Completed") {
       setFiltered(state.filter((item) => item.status === "completed"));
     } else if (value === "Cancelled") {
       setFiltered(state.filter((item) => item.status === "cancelled"));
     } else if (value === "Pending") {
-      setFiltered(state.filter((item) => item.status === "created"));
+      setFiltered(state.filter((item) => item.status === "pending"));
     }
   };
 
@@ -148,7 +95,7 @@ const BusinessAppointments = ({ todays }) => {
       let completed = state.filter(
         (item) => item.status === "completed"
       ).length;
-      let pending = state.filter((item) => item.status === "created").length;
+      let pending = state.filter((item) => item.status === "pending").length;
       let cancelled = state.filter(
         (item) => item.status === "cancelled"
       ).length;
@@ -168,11 +115,11 @@ const BusinessAppointments = ({ todays }) => {
         <Table.Cell>{s.date}</Table.Cell>
         <Table.Cell>{s.time}</Table.Cell>
         <Table.Cell>
-          {s.status === "created" ? (
-            <Actions show={s.status === "created"} id={s._id} />
-          ) : (
-            <p>{s.status.toUpperCase()}</p>
-          )}
+          <AppointmentTableActions
+            status={s.status}
+            id={s._id}
+            todays={todays}
+          />
         </Table.Cell>
       </Table.Row>
     );
