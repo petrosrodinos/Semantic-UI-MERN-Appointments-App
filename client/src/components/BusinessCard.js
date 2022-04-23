@@ -50,25 +50,24 @@ const BusinessCard = ({ data, profile, children }) => {
       </Card.Content>
       <Card.Content extra>
         <Grid stackable>
-          <Grid.Column mobile={16} tablet={8} computer={6}>
+          <Grid.Row centered mobile={16} tablet={8} computer={6}>
             <b style={style}>
               <Icon size="large" name="location arrow" color="teal" />
               {`${data.address} ${data.city} ${data.area}`}
             </b>
-          </Grid.Column>
-          <Grid.Column mobile={16} tablet={8} computer={5}>
-            <b style={style}>
-              <Icon size="large" name="phone" color="teal" />
-              {data.phone}
-            </b>
-          </Grid.Column>
-
-          <Grid.Column mobile={16} tablet={8} computer={5}>
+          </Grid.Row>
+          <Grid.Row centered mobile={16} tablet={8} computer={5}>
             <b style={style}>
               <Icon size="large" name="mail" color="teal" />
               {data.email}
             </b>
-          </Grid.Column>
+          </Grid.Row>
+          <Grid.Row centered mobile={16} tablet={8} computer={5}>
+            <b style={style}>
+              <Icon size="large" name="phone" color="teal" />
+              {data.phone}
+            </b>
+          </Grid.Row>
         </Grid>
         {children && (
           <>
