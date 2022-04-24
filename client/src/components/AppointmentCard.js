@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 const AppointmentCard = ({ hours, id, name }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [date, setDate] = useState(null);
+  const [date, setDate] = useState([]);
   const [error, setError] = useState(null);
   const [confirm, setConfirm] = useState({
     open: false,
@@ -131,12 +131,13 @@ const AppointmentCard = ({ hours, id, name }) => {
             onChange={handleChange}
           />
         </Card.Content>
-        {!date && (
-          <Message style={{ margin: 20 }} color="yellow">
-            There are no available appointments for this day
-          </Message>
-        )}
-        {date && (
+        {!date ||
+          (date.length === 0 && (
+            <Message style={{ margin: 20 }} color="yellow">
+              There are no available appointments for this day
+            </Message>
+          ))}
+        {date && date.length > 0 && (
           <Table celled>
             <Table.Header>
               <Table.Row>
