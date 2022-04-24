@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Table,
-  Message,
-  Loader,
-  Popup,
-  Dropdown,
-} from "semantic-ui-react";
+import { Table, Message, Loader, Popup, Dropdown } from "semantic-ui-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAppointments,
   reset,
-  changeAppointmentStatus,
 } from "../features/appointments/appointmentSlice";
+import { UserAppointmentTableActions } from "./AppointmentTableActions";
+import { AppointmentUserFilters } from "./AppointmentFilters";
 
 const UserAppointments = () => {
   const [state, setState] = useState([]);
@@ -24,48 +18,9 @@ const UserAppointments = () => {
     (state) => state.appointments
   );
 
-  const Actions = ({ id, status }) => {
-    if (status === "pending") {
-      return (
-        <Button.Group fluid basic size="large">
-          <Popup
-            content="Edit"
-            trigger={<Button basic color="yellow" icon="edit" />}
-          />
-          <Popup
-            content="Cancel"
-            trigger={
-              <Button
-                onClick={() =>
-                  dispatch(
-                    changeAppointmentStatus({
-                      id,
-                      status: "cancelled",
-                      role: "user",
-                    })
-                  )
-                }
-                basic
-                color="red"
-                icon="cancel"
-              />
-            }
-          />
-        </Button.Group>
-      );
-    } else {
-      return <p>{status.toUpperCase()}</p>;
-    }
-  };
-
-  const handleDropdownChange = (e) => {
-    handleChange(e.target.textContent);
-    setText(e.target.textContent);
-  };
-
   const handleChange = (value) => {
     setFiltered(state);
-    if (value === "completed") {
+    if (value === "Completed") {
       setFiltered(state.filter((item) => item.status === "completed"));
     } else if (value === "Cancelled") {
       setFiltered(state.filter((item) => item.status === "cancelled"));
@@ -87,7 +42,11 @@ const UserAppointments = () => {
         <Table.Cell>{s.time}</Table.Cell>
         <Table.Cell>{s.created}</Table.Cell>
         <Table.Cell>
-          <Actions status={s.status} id={s._id} />
+          <UserAppointmentTableActions
+            date={s.date}
+            status={s.status}
+            id={s._id}
+          />
         </Table.Cell>
       </Table.Row>
     );
@@ -134,27 +93,7 @@ const UserAppointments = () => {
       {isLoading && !error && <Loader size="big" />}
       {!isLoading && state.length > 0 && (
         <>
-          <Dropdown
-            text={text}
-            icon="filter"
-            labeled
-            button
-            selection
-            className="icon"
-          >
-            <Dropdown.Menu>
-              <Dropdown.Item onClick={handleDropdownChange}>All</Dropdown.Item>
-              <Dropdown.Item onClick={handleDropdownChange}>
-                Completed
-              </Dropdown.Item>
-              <Dropdown.Item onClick={handleDropdownChange}>
-                Cancelled
-              </Dropdown.Item>
-              <Dropdown.Item onClick={handleDropdownChange}>
-                Pending
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+          <AppointmentUserFilters handleChange={handleChange} />
           <Table celled stackable>
             <Table.Header>
               <Table.Row>

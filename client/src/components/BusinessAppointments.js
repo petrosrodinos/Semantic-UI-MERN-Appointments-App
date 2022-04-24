@@ -6,9 +6,9 @@ import {
   fetchTodaysAppointments,
   reset,
 } from "../features/appointments/appointmentSlice";
-import AppointmentFilters from "./AppointmentFilters";
+import { AppointmentBusinessFilters } from "./AppointmentFilters";
 import TodaysAppointmentStats from "./TodaysAppointmentStats";
-import AppointmentTableActions from "./AppointmentTableActions";
+import { BusinessAppointmentTableActions } from "./AppointmentTableActions";
 
 const BusinessAppointments = ({ todays }) => {
   const dispatch = useDispatch();
@@ -115,7 +115,8 @@ const BusinessAppointments = ({ todays }) => {
         <Table.Cell>{s.date}</Table.Cell>
         <Table.Cell>{s.time}</Table.Cell>
         <Table.Cell>
-          <AppointmentTableActions
+          <BusinessAppointmentTableActions
+            date={s.date}
             status={s.status}
             id={s._id}
             todays={todays}
@@ -127,7 +128,7 @@ const BusinessAppointments = ({ todays }) => {
 
   return (
     <>
-      <AppointmentFilters
+      <AppointmentBusinessFilters
         todays={todays}
         handleChange={handleChange}
         handleSearch={handleSearch}

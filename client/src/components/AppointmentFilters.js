@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import { Dropdown, Input, Grid } from "semantic-ui-react";
 import { DateInput } from "semantic-ui-calendar-react";
 
-const AppointmentFilters = ({ handleChange, handleSearch, todays }) => {
+export const AppointmentBusinessFilters = ({
+  handleChange,
+  handleSearch,
+  todays,
+}) => {
   const [date, setDate] = useState(new Date());
   const [text, setText] = useState("All");
 
@@ -75,4 +79,29 @@ const AppointmentFilters = ({ handleChange, handleSearch, todays }) => {
   );
 };
 
-export default AppointmentFilters;
+export const AppointmentUserFilters = ({ handleChange }) => {
+  const [text, setText] = useState("All");
+
+  const handleDropdownChange = (e) => {
+    handleChange(e.target.textContent);
+    setText(e.target.textContent);
+  };
+
+  return (
+    <Dropdown
+      text={text}
+      icon="filter"
+      labeled
+      button
+      selection
+      className="icon"
+    >
+      <Dropdown.Menu>
+        <Dropdown.Item onClick={handleDropdownChange}>All</Dropdown.Item>
+        <Dropdown.Item onClick={handleDropdownChange}>Completed</Dropdown.Item>
+        <Dropdown.Item onClick={handleDropdownChange}>Cancelled</Dropdown.Item>
+        <Dropdown.Item onClick={handleDropdownChange}>Pending</Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+  );
+};
