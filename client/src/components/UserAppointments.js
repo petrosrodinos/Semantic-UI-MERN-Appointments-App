@@ -65,7 +65,7 @@ const UserAppointments = () => {
 
   const handleChange = (value) => {
     setFiltered(state);
-    if (value === "Checked In") {
+    if (value === "completed") {
       setFiltered(state.filter((item) => item.status === "completed"));
     } else if (value === "Cancelled") {
       setFiltered(state.filter((item) => item.status === "cancelled"));
