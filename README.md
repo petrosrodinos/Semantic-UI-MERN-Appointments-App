@@ -1,5 +1,5 @@
 # Semantic-UI-MERN-Appointments-App
-LIVE URL: <strike>https://my-bookings.herokuapp.com/<strike/><br/><br/>
+LIVE URL: <strike>https://my-bookings.herokuapp.com/</strike><br/><br/>
 -Authentication functionality.<br/>
 -Business info completion(category,address,office photos,contact info,available appointment spots).</br>
 -Business profile page with photos,available appointments,rating,client comments and business replies.</br>
